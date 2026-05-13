@@ -1,0 +1,43 @@
+#  build artifacts
+dest/
+bin/
+*.exe
+*.out
+*.test
+
+# Dependency directories (remove the comment below if you use Go modules)
+# vendor/
+
+# Output files
+output/
+
+# OS/Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+*.tmp
+
+
+# IDE/Editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+
+# Archives
+_archive/
+*.zip
+
+# scratch files
+__*
+# ignore experimental task runner files (not adopted)
+Makefile
+Justfile
+
+# ignore task runner files
+.task/
