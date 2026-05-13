@@ -2,7 +2,6 @@ name: test
 
 on:
   push:
-  workflow_dispatch:
 
 jobs:
   test:
@@ -11,4 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo "hello actions"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - run: go test ./...
+      - run: go build ./...
