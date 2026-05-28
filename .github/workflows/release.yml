@@ -66,6 +66,8 @@ jobs:
           GOOS='${{ matrix.goos }}' GOARCH='${{ matrix.goarch }}' \
             go build -trimpath -ldflags="-s -w" -o "${output_dir}/${binary_name}" ./
 
+          cp README.md LICENSE "${output_dir}/" || true
+
           if [ '${{ matrix.archive }}' = 'zip' ]; then
             (cd build && zip -r "../dist/${artifact_base}.zip" "${artifact_base}")
           else
@@ -97,7 +99,7 @@ jobs:
         run: |
           set -euo pipefail
           cd dist
-          sha256sum * > checksums.txt
+          sha256sum * > "${APP_NAME}_${VERSION}_checksums.txt"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
