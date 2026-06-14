@@ -2,13 +2,17 @@ name: test
 
 on:
   push:
-  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+      - run: go mod tidy
 
-      - run: echo "hello actions"
+      - run: go test ./...
+      - run: go build ./...
