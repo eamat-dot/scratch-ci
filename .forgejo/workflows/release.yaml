@@ -75,7 +75,6 @@ jobs:
           fi
 
       - name: Upload build artifact
-        # uses: actions/upload-artifact@v3
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: build-${{ matrix.goos }}-${{ matrix.goarch }}
@@ -89,7 +88,6 @@ jobs:
 
     steps:
       - name: Download build artifacts
-        # uses: actions/download-artifact@v3
         uses: https://code.forgejo.org/forgejo/download-artifact@v4
         with:
           pattern: build-*
