@@ -1,6 +1,7 @@
 name: Forgejo Actions Demo
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'demo*'
