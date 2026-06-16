@@ -1,0 +1,112 @@
+# fj-release.yml.sample :: Forgejo 用のReleasesワークフロー
+# origin が forgejo の時は fj-release.ymlにリネームして使用してください
+# remote が github と forgejo 両方の場合は .foregejo/workflows/fj-release.yml へ配置
+# gh-release.yml 以外のワークフローも.foregejo/workflowsへコピーし、分離して下さい
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+      - run: go mod tidy
+      - run: go test ./...
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            archive: tar.gz
+            exe: ''
+          # - goos: darwin        # macOS はビルド対象外
+          #   goarch: arm64
+          #   archive: tar.gz
+          #   exe: ''
+          - goos: windows
+            goarch: amd64
+            archive: zip
+            exe: '.exe'
+
+    env:
+      APP_NAME: ${{ github.event.repository.name }}
+      VERSION: ${{ github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build and package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          artifact_base="${APP_NAME}_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}"
+          binary_name="${APP_NAME}${{ matrix.exe }}"
+          output_dir="build/${artifact_base}"
+
+          mkdir -p "${output_dir}"
+          GOOS='${{ matrix.goos }}' GOARCH='${{ matrix.goarch }}' \
+            go build -trimpath -ldflags="-s -w" -o "${output_dir}/${binary_name}" ./
+
+          cp README.md LICENSE "${output_dir}/" || true
+
+          if [ '${{ matrix.archive }}' = 'zip' ]; then
+            (cd build && zip -r "../dist/${artifact_base}.zip" "${artifact_base}")
+          else
+            tar -C build -czf "dist/${artifact_base}.tar.gz" "${artifact_base}"
+          fi
+
+      - name: Upload build artifact
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: build-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build artifacts
+        uses: https://code.forgejo.org/forgejo/download-artifact@v4
+        with:
+          pattern: build-*
+          merge-multiple: true
+          path: dist
+
+      - name: Generate checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum * > checksums.txt
+
+      - name: Create Forgejo Release
+        uses: actions/forgejo-release@v2
+        with:
+          direction: upload
+          url: ${{ env.GITHUB_SERVER_URL }}  # Forgejo インスタンスの URL
+          release-dir: dist                  # アップロード対象ディレクトリ
+          token: ${{ secrets.GITHUB_TOKEN }} # リリース作成用トークン
