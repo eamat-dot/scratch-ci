@@ -7,6 +7,10 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:                   # workflow_dispatch時はドラフトリリースを作る
+      tag:
+        description: Tag name
+        required: false
 
 permissions:
   contents: read
@@ -104,6 +108,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ inputs.tag || github.ref_name }} # workflow_dispatch で tag を指定した場合はそれを使用
           generate_release_notes: true
           files: |
             dist/*
