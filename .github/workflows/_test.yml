@@ -1,9 +1,12 @@
 name: test
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - '**'
+    tags:
+      - 'test*'
+    # branches:
+    #   - '**'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,5 +18,5 @@ jobs:
           go-version-file: 'go.mod'
       - run: go mod tidy
 
-      - run: go test ./...
-      - run: go build ./...
+      - run: go test -v ./...
+      - run: go build -v ./...
