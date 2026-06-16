@@ -85,7 +85,7 @@ tasks:
   lint:
     desc: "コードの静的解析"
     cmds:
-      - golangci-lint -v run
+      - golangci-lint run -v
 
   act:
     desc: "ローカルでGitHub Actions CIを実行 (actが必要)"
