@@ -132,6 +132,6 @@ jobs:
         uses: actions/forgejo-release@v2
         with:
           direction: upload
-          url: ${{ github.server_url }}
-          release-dir: dist
-          token: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{ env.GITHUB_SERVER_URL }}  # Forgejo インスタンスの URL
+          release-dir: dist                  # アップロード対象ディレクトリ
+          token: ${{ secrets.GITHUB_TOKEN }} # リリース作成用トークン
