@@ -1,5 +1,5 @@
-# タグ `v*` への push で起動する、GitHub Releases 用のワークフローです。
-# test / build / release の 3 ジョブで構成します。
+# gh-release.yml.sample :: GitHub 用のReleasesワークフロー
+# origin が github の時は gh-release.ymlにリネームして使用してください
 name: release
 
 on:
@@ -7,10 +7,6 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'リリースしますか？'
-        required: true
 
 permissions:
   contents: read
