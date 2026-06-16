@@ -1,6 +1,5 @@
-# タグ `v*` への push で起動する、GitHub / Forgejo 共通のリリースワークフローです。
+# タグ `v*` への push で起動する、Forgejo Releases 用のワークフローです。
 # test / build / release の 3 ジョブで構成します。
-# リモート先に応じて upload / release 処理を分岐します。
 name: release
 
 on:
@@ -80,14 +79,6 @@ jobs:
           fi
 
       - name: Upload build artifact
-        if: ${{ github.server_url == 'https://github.com' }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/*
-
-      - name: Upload build artifact
-        if: ${{ github.server_url != 'https://github.com' }}
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: build-${{ matrix.goos }}-${{ matrix.goarch }}
@@ -101,15 +92,6 @@ jobs:
 
     steps:
       - name: Download build artifacts
-        if: ${{ github.server_url == 'https://github.com' }}
-        uses: actions/download-artifact@v8
-        with:
-          pattern: build-*
-          merge-multiple: true
-          path: dist
-
-      - name: Download build artifacts
-        if: ${{ github.server_url != 'https://github.com' }}
         uses: https://code.forgejo.org/forgejo/download-artifact@v4
         with:
           pattern: build-*
@@ -123,19 +105,10 @@ jobs:
           cd dist
           sha256sum * > checksums.txt
 
-      - name: Create GitHub Release
-        if: ${{ github.server_url == 'https://github.com' }}
-        uses: softprops/action-gh-release@v3
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*
-
       - name: Create Forgejo Release
-        if: ${{ github.server_url != 'https://github.com' }}
         uses: actions/forgejo-release@v2
         with:
           direction: upload
-          url: ${{ github.server_url }}
-          release-dir: dist
-          token: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{ env.GITHUB_SERVER_URL }}  # Forgejo インスタンスの URL
+          release-dir: dist                  # アップロード対象ディレクトリ
+          token: ${{ secrets.GITHUB_TOKEN }} # リリース作成用トークン

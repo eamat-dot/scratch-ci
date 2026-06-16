@@ -1,0 +1,21 @@
+# アクションが動くか確認するためだけのデモ
+name: Actions Demo
+
+on:
+  push:
+    tags:
+      - 'demo*'
+  workflow_dispatch:
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      - name: Run a one-line script
+        run: echo "Hello, world"
+
+      - name: Check OS Version
+        run: cat /etc/os-release
