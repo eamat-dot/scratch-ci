@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Verify go.mod/go.sum are tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+
+      - run: go test -v ./...
+      - run: go build -v ./...
