@@ -38,13 +38,25 @@ release は sample を用途に応じてリネームして使います。
 
 ### 使い方
 
-1. GitHub で使う場合
+1. GitHub のみで使う場合
    - `gh-release.yml.sample` を `gh-release.yml` にリネームして有効化
-2. Forgejo で使う場合
+
+2. Forgejo のみで使う場合
    - `fj-release.yml.sample` を `fj-release.yml` にリネームして有効化
+   - フォルダは `.github/workflows/` のままでよい
+
 3. GitHub と Forgejo の両方で使う場合
-   - GitHub 側: `.github/workflows/*.yml`
-   - Forgejo 側: `.forgejp/workflows/*.yml` にコピーして分離
+   - `.github/workflows/` と `.forgejo/workflows/` に分離する
+   - GitHub 側: `.github/workflows/*.yml` (`gh-release.yml` を有効化)
+   - Forgejo 側: `.forgejp/workflows/*.yml` (`.github/workflows/`から全てコピーし `fj-release.yml` を有効化)
+
+
+#### Forgejo ワークフローの優先順位
+> **NOTE:**
+> - `.forgejo/workflows/` → `.gitea/workflows/` → `.github/workflows/` の順
+> - フォールバックは「全か無か」
+> - `.forgejo/workflows/` にファイルが1つでもあれば `.github/workflows/` は**完全に無視**され、両方を同時に動かすことはできない  \
+> - `.forgejo/workflows/` ディレクトリが存在しない場合は、`.github/workflows/` が使われる
 
 ## 実行状況の確認
 
