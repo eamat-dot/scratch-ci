@@ -30,17 +30,20 @@ import (
 )
 
 var cfgFile string
+var Version = "dev"
+var longDescription = `複数行にまたがる長い説明。次の内容が含まれる可能性があります。
+アプリケーションの使用例と使用法。たとえば:
+
+Cobra は、アプリケーションを強化する Go 用の CLI ライブラリです。
+このアプリケーションは必要なファイルを生成するツールです
+Cobra アプリケーションをすばやく作成します。`
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "__REPLACE_MODULE_NAME__",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:     "__REPLACE_MODULE_NAME__",
+	Version: Version,
+	Short:   "アプリケーションの簡単な説明",
+	Long:    longDescription,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
