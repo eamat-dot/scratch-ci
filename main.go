@@ -23,9 +23,6 @@ package main
 
 import "__REPLACE_MODULE_NAME__/cmd"
 
-// var Version = "dev"
-
 func main() {
-	// cmd.SetVersion(Version)
 	cmd.Execute()
 }

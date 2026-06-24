@@ -81,6 +81,20 @@ tasks:
         vars:
           EXEC: '{{.BINARY_PATH}}'
 
+  run:version:
+    aliases: [v]
+    desc: アプリケーションのバージョンを表示 ({{.BINARY_NAME}} version)
+    cmds:
+      - task: run
+        vars:
+          EXEC: '{{.BINARY_PATH}}'
+          CLI_ARGS: 'version'
+
+      - task: run
+        vars:
+          EXEC: '{{.BINARY_PATH}}'
+          CLI_ARGS: '--version'
+
   test:
     desc: "テストを実行"
     cmds:
