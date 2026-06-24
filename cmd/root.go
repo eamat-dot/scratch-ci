@@ -27,6 +27,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"runtime/debug"
 )
 
 var cfgFile string
@@ -37,6 +39,8 @@ var longDescription = `複数行にまたがる長い説明。次の内容が含
 Cobra は、アプリケーションを強化する Go 用の CLI ライブラリです。
 このアプリケーションは必要なファイルを生成するツールです
 Cobra アプリケーションをすばやく作成します。`
+
+// var debug bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -70,6 +74,21 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		fmt.Printf("Version: %s\n", info.Main.Version)
+		Version = info.Main.Version
+	}
+
+	// rootフラグのサンプル
+	// rootCmd.PersistentFlags().BoolVarP(
+	// 	&debug,
+	// 	"debug",
+	// 	"d",
+	// 	false,
+	// 	"デバッグモード",
+	// )
+
 }
 
 // initConfig reads in config file and ENV variables if set.

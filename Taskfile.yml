@@ -10,6 +10,7 @@ includes:
     optional: true
 
 vars:
+  MODULE: __REPLACE_MODULE_NAME__
   BINARY_NAME: __REPLACE_MODULE_NAME__
   BINARY_PATH: ./bin/{{.BINARY_NAME}}{{exeExt}}
 
@@ -42,15 +43,16 @@ tasks:
       - '{{.BINARY_PATH}}'
     vars:
       VERSION:
-        sh: git describe --tags --abbrev=0 2>/dev/null || echo "dev"
-      COMMIT:
-        sh: git rev-parse --short HEAD 2>/dev/null || echo "unknown"
-      # DATE:
-      #   sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
+        sh: git describe --tags --always --dirty
     cmds:
       - mkdir -p bin
-      # - go build -o {{.BINARY_PATH}} .
-      - go build -ldflags "-X main.version={{.VERSION}} -X main.commit={{.COMMIT}} " -o {{.BINARY_PATH}} .
+      - go build -o {{.BINARY_PATH}} .
+
+      # - >
+      #   go build
+      #   -ldflags="-X {{.MODULE}}/cmd.Version={{.VERSION}}"
+      #   -o {{.BINARY_PATH}}
+      #   .
 
   build:force:
     desc: アプリケーションをビルド(強制)
