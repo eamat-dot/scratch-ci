@@ -1,0 +1,39 @@
+version: '3'
+#=========================================================================
+#  生成バイナリのコマンド網羅用 Taskfile
+#  実行環境においても単体利用可能なランチャーとすることを想定
+#=========================================================================
+
+vars:
+  APP_NAME:     __REPLACE_MODULE_NAME__
+  DEV_PATH:     './bin/{{.APP_NAME}}{{exeExt}}'
+  CURRENT_PATH: './{{.APP_NAME}}{{exeExt}}'
+  APP:
+    sh: |
+      if [ -e "{{.DEV_PATH}}" ]; then
+        printf "%s" "{{.DEV_PATH}}"
+      elif [ -e "{{.CURRENT_PATH}}" ]; then
+        printf "%s" "{{.CURRENT_PATH}}"
+      else
+        printf "%s" "{{.APP_NAME}}"
+      fi
+
+tasks:
+  default:
+    desc:   利用可能なコマンドを表示
+    cmd:    task --list
+    silent: true
+
+  usage:
+    desc: '{{.APP_NAME}} [-- subcommand] --help'
+    cmd:  '{{.APP}} {{.CLI_ARGS}} --help'
+
+  version:
+    desc: '{{.APP_NAME}} version [-- args]'
+    cmd:  '{{.APP}} version {{.CLI_ARGS}}'
+
+  # CLIコマンドごとにタスクを定義(__command__をコマンド名に置き換えて使う)
+  # __command__:
+  #   desc:  '{{.APP_NAME}} __command__ [-- args]'
+  #   cmd:  '{{.APP}} __command__  {{.CLI_ARGS}}'
+

@@ -1,0 +1,21 @@
+version: '3'
+#=========================================================================
+#  Debug用のTaskfile
+#=========================================================================
+
+
+tasks:
+  default:
+    cmds:
+      - task: help
+    silent: true
+
+  usage:
+    desc: go run . [-- subcommand] --help
+    cmd:  go run . {{.CLI_ARGS}} --help
+
+
+  # CLIコマンドごとにタスクを定義(__command__をコマンド名に置き換えて使う)
+  # __command__:
+  #   desc: go run . __command__ [-- args]
+  #   cmd:  go run . __command__  {{.CLI_ARGS}}

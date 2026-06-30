@@ -1,6 +1,3 @@
-/*
-Copyright © 2026 eamat. <eamat.dot@gmail.com>
-*/
 package cmd
 
 import (

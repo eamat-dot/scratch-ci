@@ -71,6 +71,7 @@ jobs:
             go build -trimpath -ldflags="-s -w" -o "${output_dir}/${binary_name}" ./
 
           cp README.md LICENSE "${output_dir}/" || true
+          cp .taskfiles/app.yml "${output_dir}/Taskfile.yml"
 
           if [ '${{ matrix.archive }}' = 'zip' ]; then
             (cd build && zip -r "../dist/${artifact_base}.zip" "${artifact_base}")
@@ -95,7 +96,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: build-*
-          merge-multiple: true
+          merge-multiple: 'true'
           path: dist
 
       - name: Generate checksums
@@ -109,6 +110,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ inputs.tag || github.ref_name }} # workflow_dispatch で tag を指定した場合はそれを使用
-          generate_release_notes: true
+          generate_release_notes: 'true'
           files: |
             dist/*

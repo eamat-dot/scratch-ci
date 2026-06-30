@@ -1,0 +1,48 @@
+version: '3'
+
+tasks:
+  cobra:
+    desc: Cobra commands
+    silent: true
+    cmds:
+      - |
+        cat <<'EOF'
+        [ Cobra ]
+          go install github.com/spf13/cobra-cli@latest
+          go get github.com/spf13/cobra@latest
+
+          cobra-cli init
+          cobra-cli add <subcommand>
+
+        [ Go ]
+          go mod init <module-name>
+
+        EOF
+
+  git:
+    desc: Git commands
+    silent: true
+    cmds:
+      - |
+        cat <<'EOF'
+        [ Git ]
+          - 直前コミットのメッセージ修正
+            git commit --amend
+
+          - ファイル追加して直前コミットへ
+            git add .
+            git commit --amend --no-edit
+
+          - 直前コミットを取り消す（変更は残す）
+            git reset --soft HEAD^
+
+          - コミットだけ消してステージも解除
+            git reset HEAD^
+
+          - 全部取り消す
+            git reset --hard HEAD^
+
+          - Push済みコミットを書き換えた後
+            git push --force-with-lease
+
+        EOF

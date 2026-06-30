@@ -1,15 +1,15 @@
-/*
-Copyright © 2026 eamat. <eamat.dot@gmail.com>
-*/
 package cmd
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/adrg/xdg"
 )
 
 const APP_NAME string = "__REPLACE_MODULE_NAME__"
@@ -38,16 +38,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ~/.config/"+APP_NAME+"/config.toml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ~/.config/"+APP_NAME+"/config.(toml/yaml/json))")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -55,11 +46,19 @@ func initConfig() {
 	if cfgFile != "" { // --config 指定時
 		viper.SetConfigFile(cfgFile)
 	} else {
-		configDir, err := getConfigDir()
-		cobra.CheckErr(err)
+		// XDG_CONFIG_HOME の設定があれば、そこを優先
+		// 無ければ linux: ~/.config || windows: %AppData%
+		viper.AddConfigPath(filepath.Join(xdg.ConfigHome, APP_NAME))
 
-		viper.AddConfigPath(filepath.Join(configDir, APP_NAME))
-		viper.SetConfigType("toml")
+		// Windows の場合は、%USERPROFILE%\.config も探してみる
+		if runtime.GOOS == "windows" {
+			if home, err := os.UserHomeDir(); err == nil {
+				viper.AddConfigPath(filepath.Join(home, ".config", APP_NAME))
+			}
+		}
+
+		// viper.SetConfigType("toml")
+		// 拡張子はviperが自動で補完するため付けない (実際のファイル名は config.toml などにする)
 		viper.SetConfigName("config")
 	}
 
@@ -69,16 +68,4 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
-}
-
-// getConfigDir は、XDG Base Directory Specification に従って設定ディレクトリを取得する
-func getConfigDir() (string, error) {
-	if dir := os.Getenv("XDG_CONFIG_HOME"); dir != "" {
-		return dir, nil
-	}
-
-	home, err := os.UserHomeDir()
-	cobra.CheckErr(err)
-
-	return filepath.Join(home, ".config"), nil
 }

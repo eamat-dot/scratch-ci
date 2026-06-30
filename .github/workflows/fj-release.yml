@@ -69,6 +69,7 @@ jobs:
             go build -trimpath -ldflags="-s -w" -o "${output_dir}/${binary_name}" ./
 
           cp README.md LICENSE "${output_dir}/" || true
+          cp .taskfiles/app.yml "${output_dir}/Taskfile.yml"
 
           if [ '${{ matrix.archive }}' = 'zip' ]; then
             (cd build && zip -r "../dist/${artifact_base}.zip" "${artifact_base}")
@@ -93,7 +94,7 @@ jobs:
         uses: https://code.forgejo.org/forgejo/download-artifact@v4
         with:
           pattern: build-*
-          merge-multiple: true
+          merge-multiple: 'true'
           path: dist
 
       - name: Generate checksums
