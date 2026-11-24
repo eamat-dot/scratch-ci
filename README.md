@@ -1,3 +1,3 @@
-# Go プロジェクト テンプレート
+# scratch-ci
 
-__REPLACE_MODULE_NAME__ をプロジェクト名に置き換えて使用する
+GitHub Actions の練習用
